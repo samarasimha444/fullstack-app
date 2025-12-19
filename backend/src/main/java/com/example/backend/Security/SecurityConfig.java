@@ -2,6 +2,7 @@ package com.example.backend.Security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -18,9 +19,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.csrf(csrf -> csrf.disable())
+        http
+            .csrf(csrf -> csrf.disable())
+            .cors(cors -> {}) // ✅ ENABLE CORS IN SECURITY
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/signup","/ws/**").permitAll()
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // ✅ PRE-FLIGHT
+                .requestMatchers("/login", "/signup", "/ws/**").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

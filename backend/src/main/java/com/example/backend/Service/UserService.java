@@ -5,6 +5,7 @@ import com.example.backend.Repository.UserRepository;
 import com.example.backend.Security.JwtUtil;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -39,4 +40,19 @@ public class UserService {
                         : "Invalid password")
                 .orElse("No user exists");
     }
+
+    //users
+   //give list of users from search bar
+   public List<String> searchUsernames(String keyword) {
+        if (keyword == null || keyword.isBlank()) {
+            return List.of(); // no garbage results
+        }
+        return repo.findUsernamesByKeyword(keyword);
+    }
 }
+
+
+  
+
+
+
