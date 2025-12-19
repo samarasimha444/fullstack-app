@@ -21,4 +21,10 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
             String sender2,
             String receiver2
     );
+
+     // All messages involving user, latest first
+    List<Message> findBySenderOrReceiverOrderByTimestampDesc(
+            String sender,
+            String receiver
+    );
 }
