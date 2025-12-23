@@ -62,6 +62,8 @@ public class UserController {
         return messageService.getChatHistory(sender, receiver);
     }
 
+
+//chat history
     @GetMapping("chat/recents")
     public List<Message> getRecentChats(Principal principal) {
 
@@ -69,6 +71,16 @@ public class UserController {
 
         return messageService.getRecentChats(currentUser);
     }
+
+
+//users
+@GetMapping("/users")
+    public List<String> getUsers() {
+        return service.getAllUsernames();
+    }
+
+
+
 }
 
 

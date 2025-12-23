@@ -26,6 +26,10 @@ public List<Message> getChatHistory(String user1, String user2) {
                         user2, user1
                 );
     }
+
+
+    //recent chats for a user
+
      public List<Message> getRecentChats(String currentUser) {
 
         List<Message> messages =

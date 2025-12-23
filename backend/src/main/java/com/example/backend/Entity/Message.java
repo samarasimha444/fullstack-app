@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 
 @Entity
-@Table(name = "chat_messages")
+@Table(name = "message")
 public class Message {
 
     @Id

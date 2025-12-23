@@ -20,4 +20,8 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     """)
     List<String> findUsernamesByKeyword(@Param("keyword") String keyword);
 
+    // Fetch all usernames
+    @Query("select u.username from UserEntity u")
+    List<String> findAllUsernames();
+
 }

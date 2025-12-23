@@ -49,6 +49,12 @@ public class UserService {
         }
         return repo.findUsernamesByKeyword(keyword);
     }
+
+    
+
+     public List<String> getAllUsernames() {
+        return repo.findAllUsernames();
+    }
 }
 
 

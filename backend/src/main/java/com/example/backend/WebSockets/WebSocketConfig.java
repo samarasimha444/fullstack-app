@@ -1,29 +1,41 @@
 package com.example.backend.WebSockets;
+
+import com.example.backend.Presence.PresenceInterceptor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
-
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-    @Override
-    
-public void registerStompEndpoints(StompEndpointRegistry registry) {
-    registry.addEndpoint("/ws")
-            .setAllowedOriginPatterns("http://localhost:5173")
-            .withSockJS();
-}
+    private final PresenceInterceptor presenceInterceptor;
 
+    // 👇 inject interceptor
+    public WebSocketConfig(PresenceInterceptor presenceInterceptor) {
+        this.presenceInterceptor = presenceInterceptor;
+    }
+
+    @Override
+    public void registerStompEndpoints(StompEndpointRegistry registry) {
+        registry.addEndpoint("/ws")
+                .setAllowedOriginPatterns("http://localhost:5173")
+                .withSockJS();
+    }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.setApplicationDestinationPrefixes("/app"); // client → server
-        registry.enableSimpleBroker("/queue");              // server → client
-        registry.setUserDestinationPrefix("/user");         // 1-to-1
+        registry.setApplicationDestinationPrefixes("/app");
+        registry.enableSimpleBroker("/queue", "/topic"); // 👈 add /topic
+        registry.setUserDestinationPrefix("/user");
+    }
+
+    // 👇 THIS IS THE MOST IMPORTANT PART
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.interceptors(presenceInterceptor);
     }
 }
-
