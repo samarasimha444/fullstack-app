@@ -15,8 +15,7 @@ public class WebSocketAuthChannelInterceptor implements ChannelInterceptor {
     private final JwtUtil jwtUtil;
 
     public WebSocketAuthChannelInterceptor(JwtUtil jwtUtil) {
-        this.jwtUtil = jwtUtil;
-    }
+        this.jwtUtil = jwtUtil;}
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {

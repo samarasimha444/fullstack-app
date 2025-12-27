@@ -27,19 +27,34 @@ public class JwtFilter extends OncePerRequestFilter {
             FilterChain chain
     ) throws java.io.IOException, jakarta.servlet.ServletException {
 
+        String path = request.getRequestURI();
+
+        // ✅ SKIP OAUTH ENDPOINTS
+        if (path.startsWith("/oauth2") || path.startsWith("/login/oauth2")) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         String header = request.getHeader("Authorization");
 
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
-            String username = jwtUtil.extractUsername(token);
 
-            var auth = new UsernamePasswordAuthenticationToken(
-                    username, null, Collections.emptyList()
-            );
-            auth.setDetails(
-                    new WebAuthenticationDetailsSource().buildDetails(request)
-            );
-            SecurityContextHolder.getContext().setAuthentication(auth);
+            if (jwtUtil.validateToken(token)) {
+                String username = jwtUtil.extractUsername(token);
+
+                var auth = new UsernamePasswordAuthenticationToken(
+                        username,
+                        null,
+                        Collections.emptyList()
+                );
+
+                auth.setDetails(
+                        new WebAuthenticationDetailsSource().buildDetails(request)
+                );
+
+                SecurityContextHolder.getContext().setAuthentication(auth);
+            }
         }
 
         chain.doFilter(request, response);

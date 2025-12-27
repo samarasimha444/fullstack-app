@@ -1,95 +1,59 @@
 package com.example.backend.Controller;
-import org.springframework.web.bind.annotation.RestController;
-import com.example.backend.Entity.UserEntity;
-import com.example.backend.Service.UserService;
-
-
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import com.example.backend.Service.MessageService;
 import com.example.backend.Entity.Message;
-
-
+import com.example.backend.Entity.UserEntity;
+import com.example.backend.Service.MessageService;
+import com.example.backend.Service.UserService;
+import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.List;
 
-
-
-
 @RestController
+
 public class UserController {
 
-   
-    private final UserService service;
+    private final UserService userService;
     private final MessageService messageService;
-    
-    public UserController( UserService service, MessageService messageService) {
-        this.service = service;
-        this.messageService = messageService;
-    }
-    
 
-    //login
+    //login 
     @PostMapping("/login")
     public String login(@RequestBody UserEntity user) {
-        return service.login(user);
+        return userService.login(user);
     }
-
+    
     //signup
     @PostMapping("/signup")
     public String signup(@RequestBody UserEntity user) {
-        return service.signup(user);
+        return userService.signup(user);
     }
 
-   
-    // GET /users/search?query=sa
+    // search
     @GetMapping("/users/search")
     public List<String> searchUsers(@RequestParam String query) {
-        return service.searchUsernames(query);
+        return userService.searchUsernames(query);
     }
 
 
-      @GetMapping("chat/history")
+    //user list
+    @GetMapping("/users")
+    public List<String> getUsers() {
+        return userService.getAllUsernames();
+    }
+
+     // chat history
+     @GetMapping("/chat/history")
     public List<Message> getChatHistory(
             @RequestParam String receiver,
             Principal principal
     ) {
-
-        String sender = principal.getName(); // extracted from JWT
-
+        String sender = principal.getName();
         return messageService.getChatHistory(sender, receiver);
     }
 
 
-//chat history
-    @GetMapping("chat/recents")
+    // recents
+    @GetMapping("/chat/recents")
     public List<Message> getRecentChats(Principal principal) {
-
-        String currentUser = principal.getName();
-
-        return messageService.getRecentChats(currentUser);
+        return messageService.getRecentChats(principal.getName());
     }
-
-
-//users
-@GetMapping("/users")
-    public List<String> getUsers() {
-        return service.getAllUsernames();
-    }
-
-
 
 }
-
-
-
-
-    
-   
-
-    
-    
-    
-    

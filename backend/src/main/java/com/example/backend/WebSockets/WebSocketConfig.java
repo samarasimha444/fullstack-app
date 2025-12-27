@@ -1,6 +1,4 @@
 package com.example.backend.WebSockets;
-
-import com.example.backend.Presence.PresenceInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -12,12 +10,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-    private final PresenceInterceptor presenceInterceptor;
-
-    // 👇 inject interceptor
-    public WebSocketConfig(PresenceInterceptor presenceInterceptor) {
-        this.presenceInterceptor = presenceInterceptor;
-    }
+    
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
@@ -29,13 +22,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.setApplicationDestinationPrefixes("/app");
-        registry.enableSimpleBroker("/queue", "/topic"); // 👈 add /topic
+        registry.enableSimpleBroker("/queue");
         registry.setUserDestinationPrefix("/user");
     }
 
-    // 👇 THIS IS THE MOST IMPORTANT PART
-    @Override
-    public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.interceptors(presenceInterceptor);
-    }
+
+   
 }
