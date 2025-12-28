@@ -17,15 +17,15 @@ public class JwtUtil {
 
     private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
 
-    public String generateToken(Long userId, String email) {
-        return Jwts.builder()
-                .setSubject(String.valueOf(userId))
-                .claim("email", email)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
-    }
+    public String generateToken(Long userId) {
+    return Jwts.builder()
+        .setSubject(String.valueOf(userId))
+        .setIssuedAt(new Date())
+        .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
+        .signWith(key, SignatureAlgorithm.HS256)
+        .compact();
+}
+
 
     public Claims validateToken(String token) {
         return Jwts.parserBuilder()

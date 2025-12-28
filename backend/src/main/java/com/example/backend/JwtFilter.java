@@ -9,14 +9,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
 import java.io.IOException;
 import java.util.Collections;
 
-
-@Component
+@Component // Register this filter as a Spring bean
 public class JwtFilter extends OncePerRequestFilter {
 
-    private final JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil; // Utility for JWT validation
 
     public JwtFilter(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
@@ -29,36 +29,42 @@ public class JwtFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        String token = null;
+        String token = null; // Will hold JWT from cookie
 
+        // Extract JWT from cookies
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
                 if ("AUTH_TOKEN".equals(cookie.getName())) {
-                    token = cookie.getValue();
+                    token = cookie.getValue(); // JWT found
                     break;
                 }
             }
         }
 
+        // If token exists, validate it
         if (token != null) {
             try {
-                Claims claims = jwtUtil.validateToken(token);
+                Claims claims = jwtUtil.validateToken(token); // Verify JWT
 
+                // Create authenticated user context
                 UsernamePasswordAuthenticationToken auth =
                         new UsernamePasswordAuthenticationToken(
-                                claims.getSubject(),
-                                null,
-                                Collections.emptyList()
+                                claims.getSubject(),  // User ID from JWT
+                                null,                 // No credentials needed
+                                Collections.emptyList() // No roles for now
                         );
 
+                // Store authentication in SecurityContext
                 SecurityContextHolder.getContext().setAuthentication(auth);
 
             } catch (Exception e) {
+                // Invalid or expired JWT
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                return;
+                return; // Stop request processing
             }
         }
 
+        // Continue with next filter / controller
         filterChain.doFilter(request, response);
     }
 }

@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 
 @Component
 public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
-
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
 
@@ -29,10 +28,12 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
     ) throws IOException {
 
         OAuth2User oauthUser = (OAuth2User) authentication.getPrincipal();
+        System.err.println("OAuth User Attributes: " + oauthUser.getAttributes());
 
         String email = oauthUser.getAttribute("email");
         String name  = oauthUser.getAttribute("name");
         String sub   = oauthUser.getAttribute("sub");
+        String picture = oauthUser.getAttribute("picture");
 
         User user = userRepository
                 .findByProviderAndProviderId("GOOGLE", sub)
@@ -42,12 +43,13 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
                     u.setName(name);
                     u.setProvider("GOOGLE");
                     u.setProviderId(sub);
+                    u.setPicture(picture);
                     u.setCreatedAt(LocalDateTime.now());
                     return userRepository.save(u);
                 });
 
         // 🔐 CREATE JWT
-        String jwt = jwtUtil.generateToken(user.getId(), user.getEmail());
+        String jwt = jwtUtil.generateToken(user.getId());
 
         // 🍪 SET JWT IN HTTP-ONLY COOKIE
         Cookie cookie = new Cookie("AUTH_TOKEN", jwt);

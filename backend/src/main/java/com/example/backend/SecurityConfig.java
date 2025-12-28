@@ -7,9 +7,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-
-
-
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -26,42 +23,44 @@ public class SecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-          .csrf(csrf -> csrf.disable())
+            // Disable CSRF (JWT + stateless)
+            .csrf(csrf -> csrf.disable())
 
-          // 🔥 FORCE STATELESS
-          .sessionManagement(session ->
-              session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-          )
+            // Do not create HTTP sessions
+            .sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
 
-          // 🔥 DISABLE DEFAULT FORM LOGIN + HTTP BASIC
-          .formLogin(form -> form.disable())
-          .httpBasic(basic -> basic.disable())
+            // Disable default login mechanisms
+            .formLogin(form -> form.disable())
+            .httpBasic(basic -> basic.disable())
 
-          .authorizeHttpRequests(auth -> auth
-              .requestMatchers(
-                  "/", 
-                  "/oauth2/**",
-                  "/login/**",
-                  "/error"
-              ).permitAll()
-              .anyRequest().authenticated()
-          )
+            // Public vs protected routes
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers(
+                    "/",              // home
+                    "/oauth2/**",     // OAuth flow
+                    "/login/**",      // OAuth callback
+                    "/error"          // error page
+                ).permitAll()
+                .anyRequest().authenticated() // everything else needs auth
+            )
 
-          // OAuth only for login
-          .oauth2Login(oauth ->
-              oauth.successHandler(successHandler)
-          )
+            // Google OAuth login configuration
+            .oauth2Login(oauth ->
+                oauth.successHandler(successHandler)
+            )
 
-          // 🔥 JWT AUTH FOR ALL REQUESTS
-          .addFilterBefore(
-              jwtFilter,
-              UsernamePasswordAuthenticationFilter.class
-          )
+            // Validate JWT on every request
+            .addFilterBefore(
+                jwtFilter,
+                UsernamePasswordAuthenticationFilter.class
+            )
 
-          // 🔥 CLEAN SESSION COOKIE
-          .logout(logout ->
-              logout.deleteCookies("JSESSIONID", "AUTH_TOKEN")
-          );
+            // Logout clears cookies
+            .logout(logout ->
+                logout.deleteCookies("JSESSIONID", "AUTH_TOKEN")
+            );
 
         return http.build();
     }
