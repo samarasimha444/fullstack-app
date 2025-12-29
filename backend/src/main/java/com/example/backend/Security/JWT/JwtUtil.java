@@ -1,5 +1,4 @@
 package com.example.backend.Security.JWT;
-
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;

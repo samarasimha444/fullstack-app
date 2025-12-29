@@ -91,6 +91,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-client</artifactId>
         </dependency>
+
         <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -98,7 +99,10 @@
             <optional>true</optional>
         </dependency>
 
-    </dependencies>
+        
+
+
+ </dependencies>
 
     <build>
         <plugins>

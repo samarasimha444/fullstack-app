@@ -2,7 +2,6 @@ package com.example.backend.WebSockets;
 
 import com.example.backend.Security.JWT.JwtUtil;
 import com.example.backend.Repository.UserRepository;
-import io.jsonwebtoken.Claims;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
@@ -29,22 +28,24 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
         StompHeaderAccessor accessor =
                 MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
+        // Authenticate only during WebSocket CONNECT
         if (accessor != null && StompCommand.CONNECT.equals(accessor.getCommand())) {
 
+            // Extract JWT from cookie
             String token = CookieUtil.extractJwtFromCookie(accessor);
             if (token == null) {
                 throw new IllegalArgumentException("JWT missing");
             }
 
             try {
-                // 1️⃣ Validate token + extract userId
+                // Validate token and get user ID
                 Long userId = jwtUtil.getUserIdFromToken(token);
 
-                // 2️⃣ Fetch email from DB
-                String email = userRepository.findEmailByUserId(userId)
+                // Fetch user email from DB
+                String email = userRepository.findEmailById(userId)
                         .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-                // 3️⃣ Set WebSocket Principal
+                // Bind user identity to WebSocket session
                 accessor.setUser(() -> email);
 
             } catch (Exception e) {
