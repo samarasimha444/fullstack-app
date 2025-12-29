@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
+import Profile from "./SideBar/Profile";
+import Recents from "./SideBar/Recents";
+import ChatRoom from "./ChatRoom/ChatRoom";
 
-export default function Dashboard() {
+export default function DashBoard() {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:8080/data", {
-      credentials: "include", // 🔥 send cookie
+    fetch("https://localhost:8443/data", {
+      credentials: "include",
     })
       .then((res) => {
         if (res.status === 401) {
@@ -18,24 +20,19 @@ export default function Dashboard() {
       .then((data) => {
         if (!data) return;
         setUser(data);
-        setLoading(false);
       })
       .catch(() => {
         window.location.href = "/";
       });
   }, []);
 
-  if (loading) return <h2>Loading dashboard...</h2>;
+  if (!user) return <h2>Loading...</h2>;
 
   return (
-    <div>
-        <div>
-        <div>{user.name}</div>
-        <div>{user.userId}</div>
-        <div>{user.email}</div>
-        <div>{user.picture}</div>
-        </div>
-    </div>
-
-    );
+    <>
+      <Profile user={user} />
+      <Recents user={user} />
+      <ChatRoom user={user} />
+    </>
+  );
 }

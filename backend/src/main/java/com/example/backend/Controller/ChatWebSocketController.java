@@ -28,11 +28,16 @@ public class ChatWebSocketController {
         this.messageRepository = messageRepository;
     }
 
-    @MessageMapping("/chat.send")
-    public void sendMessage(ChatMessage chatMessage, Principal principal) {
+   @MessageMapping("/chat.send")
+public void sendMessage(ChatMessage chatMessage, Principal principal) {
 
-        // 1️⃣ Sender identity from WebSocket Principal
-        String senderEmail = principal.getName();
+    if (principal == null) {
+        System.err.println("❌ SEND rejected: no WS principal");
+        return;
+    }
+
+    String senderEmail = principal.getName();
+
 
         Long senderId = userRepository.findIdByEmail(senderEmail)
                 .orElseThrow(() -> new IllegalArgumentException("Sender not found"));

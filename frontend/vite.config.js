@@ -1,13 +1,19 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import fs from "fs";
 
-// https://vite.dev/config/
 export default defineConfig({
-  plugins: [
-    react({
-      babel: {
-        plugins: [['babel-plugin-react-compiler']],
-      },
-    }),
-  ],
-})
+  plugins: [react()],
+
+  define: {
+    global: "window",
+  },
+
+  server: {
+    https: {
+      pfx: fs.readFileSync("./certs/frontend.p12"),
+      passphrase: "password",
+    },
+    port: 5173,
+  },
+});

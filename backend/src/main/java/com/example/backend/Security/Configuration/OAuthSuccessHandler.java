@@ -57,15 +57,15 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
         // 🍪 SET JWT IN HTTP-ONLY COOKIE
         Cookie cookie = new Cookie("AUTH_TOKEN", jwt);
         cookie.setHttpOnly(true);      // JS cannot read
-        cookie.setSecure(false);       // true in production (HTTPS)
+        cookie.setSecure(true);       // true in production (HTTPS)
         cookie.setPath("/");
         cookie.setMaxAge(60 * 60 * 24); // 1 day
-        cookie.setAttribute("SameSite", "Lax");
+        cookie.setAttribute("SameSite", "None");
 
 
         response.addCookie(cookie);
 
         // ✅ REDIRECT TO FRONTEND DASHBOARD
-        response.sendRedirect("http://localhost:5173/dashboard");
+        response.sendRedirect("https://localhost:5173/dashboard");
     }
 }

@@ -1,5 +1,6 @@
 package com.example.backend.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
@@ -8,6 +9,7 @@ import java.util.Map;
 
 import com.example.backend.Entity.User;
 import com.example.backend.Repository.UserRepository;
+import java.util.List;
 
 
 
@@ -39,4 +41,17 @@ public Map<String, Object> getUserData(Authentication auth) {
     "name", user.getName(),
     "picture", user.getPicture()
 
-);}}
+);}
+
+@GetMapping("/users/search")
+public List<User> searchUsers(
+        @RequestParam String q,
+        Authentication auth
+) {
+    String myEmail = (String) auth.getPrincipal();
+    return userRepository
+            .findByEmailContainingIgnoreCaseAndEmailNot(q, myEmail);
+}
+
+
+}

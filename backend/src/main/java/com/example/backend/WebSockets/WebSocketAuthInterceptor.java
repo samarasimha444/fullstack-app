@@ -23,36 +23,37 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
     }
 
     @Override
-    public Message<?> preSend(Message<?> message, MessageChannel channel) {
+public Message<?> preSend(Message<?> message, MessageChannel channel) {
 
-        StompHeaderAccessor accessor =
-                MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+    StompHeaderAccessor accessor =
+            MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
-        // Authenticate only during WebSocket CONNECT
-        if (accessor != null && StompCommand.CONNECT.equals(accessor.getCommand())) {
+    if (accessor != null && StompCommand.CONNECT.equals(accessor.getCommand())) {
 
-            // Extract JWT from cookie
-            String token = CookieUtil.extractJwtFromCookie(accessor);
-            if (token == null) {
-                throw new IllegalArgumentException("JWT missing");
-            }
+        String token = CookieUtil.extractJwtFromCookie(accessor);
 
-            try {
-                // Validate token and get user ID
-                Long userId = jwtUtil.getUserIdFromToken(token);
-
-                // Fetch user email from DB
-                String email = userRepository.findEmailById(userId)
-                        .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
-                // Bind user identity to WebSocket session
-                accessor.setUser(() -> email);
-
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Unauthorized WebSocket connection");
-            }
+        if (token == null) {
+            return null; // ❌ reject CONNECT cleanly
         }
 
-        return message;
+        try {
+            Long userId = jwtUtil.getUserIdFromToken(token);
+
+            String email = userRepository.findEmailById(userId)
+                    .orElse(null);
+
+            if (email == null) {
+                return null;
+            }
+
+            accessor.setUser(() -> email);
+
+        } catch (Exception e) {
+            return null; // ❌ reject CONNECT cleanly
+        }
     }
+
+    return message;
+}
+
 }
