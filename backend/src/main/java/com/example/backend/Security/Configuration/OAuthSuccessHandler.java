@@ -1,15 +1,17 @@
-package com.example.backend;
+package com.example.backend.Security.Configuration;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
+import com.example.backend.Entity.User;
+import com.example.backend.Repository.UserRepository;
+import com.example.backend.Security.JWT.JwtUtil;
+
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
-
-
 @Component
 public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
     private final UserRepository userRepository;
@@ -26,7 +28,8 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
             HttpServletResponse response,
             Authentication authentication
     ) throws IOException {
-
+        
+        // Extract user details from OAuth2 authentication
         OAuth2User oauthUser = (OAuth2User) authentication.getPrincipal();
         System.err.println("OAuth User Attributes: " + oauthUser.getAttributes());
 

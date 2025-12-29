@@ -1,4 +1,4 @@
-package com.example.backend;
+package com.example.backend.Security.JWT;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -34,4 +34,10 @@ public class JwtUtil {
                 .parseClaimsJws(token)
                 .getBody();
     }
+
+    public Long getUserIdFromToken(String token) {
+    Claims claims = validateToken(token);
+    return Long.parseLong(claims.getSubject());
+}
+
 }

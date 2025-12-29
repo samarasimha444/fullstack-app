@@ -1,5 +1,4 @@
-package com.example.backend;
-
+package com.example.backend.Security.Configuration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
