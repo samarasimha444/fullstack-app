@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import ChatRoom from "./ChatRoom";
-import Recents from "./Recents";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
@@ -31,11 +29,13 @@ export default function Dashboard() {
 
   return (
     <div>
-        </div>
+        <div>
         <div>{user.name}</div>
         <div>{user.userId}</div>
         <div>{user.email}</div>
         <div>{user.picture}</div>
+        </div>
     </div>
-  );
+
+    );
 }
