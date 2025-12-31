@@ -21,8 +21,18 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class jwtFilter extends OncePerRequestFilter {
 
-    private final jwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+
+        return path.startsWith("/ws")
+            || path.startsWith("/oauth2")
+            || path.startsWith("/login")
+            || path.equals("/");
+    }
 
     @Override
     protected void doFilterInternal(
@@ -52,7 +62,7 @@ public class jwtFilter extends OncePerRequestFilter {
 
                 UsernamePasswordAuthenticationToken auth =
                         new UsernamePasswordAuthenticationToken(
-                                id,   // principal = id
+                                id,
                                 null,
                                 Collections.emptyList()
                         );

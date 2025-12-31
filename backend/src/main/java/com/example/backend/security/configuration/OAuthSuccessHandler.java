@@ -2,7 +2,7 @@ package com.example.backend.security.configuration;
 
 import com.example.backend.entity.User;
 import com.example.backend.repository.UserRepository;
-import com.example.backend.security.jwt.jwtUtil;
+import com.example.backend.security.jwt.JwtUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,7 +19,7 @@ import java.io.IOException;
 public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
 
     private final UserRepository userRepository;
-    private final jwtUtil JwtUtil;
+    private final JwtUtil JwtUtil;
 
     @Override
     public void onAuthenticationSuccess(
@@ -59,13 +59,14 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
         // 🍪 HttpOnly cookie
         Cookie cookie = new Cookie("JWT", jwt);
         cookie.setHttpOnly(true);
-        cookie.setSecure(false); // set true in production (HTTPS)
+        cookie.setSecure(true); // set true in production (HTTPS)
         cookie.setPath("/");
         cookie.setMaxAge(24 * 60 * 60); // 1 day
 
         response.addCookie(cookie);
+        cookie.setAttribute("sameSite", "None"); // for cross-site requests
 
         // 🔁 Redirect to frontend
-        response.sendRedirect("http://localhost:5173/");
+        response.sendRedirect("https://localhost:5173/");
     }
 }

@@ -18,7 +18,7 @@ public class CorsConfig {
 
         // 🔥 FRONTEND ORIGIN (exact match)
         config.setAllowedOrigins(List.of(
-                "http://localhost:5173"
+                "https://localhost:5173"
         ));
 
         // 🔥 MUST be true for cookies

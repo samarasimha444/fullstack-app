@@ -42,9 +42,11 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                     "/",
+                    "/ws/**",
                     "/login/**",
                     "/oauth2/**",
                     "/error"
+                    
                 ).permitAll()
                 .anyRequest().authenticated()
             )

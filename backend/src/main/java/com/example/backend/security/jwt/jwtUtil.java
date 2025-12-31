@@ -13,7 +13,7 @@ import java.util.Date;
 
 
 @Component
-public class jwtUtil {
+public class JwtUtil {
 
     private static final String SECRET =
             "CHANGE_THIS_TO_A_32_CHAR_MIN_SECRET_KEY";

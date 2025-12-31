@@ -1,19 +1,24 @@
-import { useEffect, useState } from "react";
 
+import { Client } from "@stomp/stompjs";
 export default function App() {
-  const [data, setData] = useState("");
 
-  useEffect(() => {
-    fetch("http://localhost:8080/me", {
-      credentials: "include" // 🔥 THIS sends the JWT cookie
-    })
-      .then(res => res.text())
-      .then(data => setData(data));
-  }, []); // 👈 add dependency array
-          
-  return (
-    <div>
-      {data}
-    </div>
-  );
+
+
+const client = new Client({
+  brokerURL: "wss://localhost:8080/ws",
+  onConnect: () => {
+    console.log("✅ STOMP CONNECTED");
+  },
+  onStompError: (frame) => {
+    console.error("❌ STOMP ERROR", frame);
+  },
+  debug: (msg) => console.log("🐛 STOMP:", msg),
+});
+
+client.activate();
+
+
+return(
+  <div>samara</div>
+)
 }
