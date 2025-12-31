@@ -1,7 +1,7 @@
 package com.example.backend.security.configuration;
 
-import com.example.backend.Repository.UserRepository;
 import com.example.backend.entity.User;
+import com.example.backend.repository.UserRepository;
 import com.example.backend.security.jwt.jwtUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -66,6 +66,6 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
         response.addCookie(cookie);
 
         // 🔁 Redirect to frontend
-        response.sendRedirect("http://localhost:5173/dashboard");
+        response.sendRedirect("http://localhost:5173/");
     }
 }

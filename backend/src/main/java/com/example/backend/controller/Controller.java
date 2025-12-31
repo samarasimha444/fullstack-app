@@ -1,28 +1,33 @@
 package com.example.backend.controller;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.example.backend.entity.User;
+import com.example.backend.service.UserService;
+
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 
 
 
 @RestController
 public class Controller {
-
-
-   @GetMapping("/")
-public String hello(Authentication authentication) {
-
-    if (authentication == null) {
-        return "Hello, Guest!";
+     
+    private UserService service;
+    public Controller(UserService service) {
+        this.service = service;
     }
 
-    // principal = Google sub (String)
-    String userId = (String) authentication.getPrincipal();
 
-    return "Hello, user with id: " + userId;
-}
+    //me endpoint
+    @GetMapping("/me")
+    public User me() {
+        return service.me();
+    }
+
+
+    
+
+
 
 
 }

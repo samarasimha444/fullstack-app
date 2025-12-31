@@ -4,7 +4,7 @@ export default function App() {
   const [data, setData] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:8080/", {
+    fetch("http://localhost:8080/me", {
       credentials: "include" // 🔥 THIS sends the JWT cookie
     })
       .then(res => res.text())
