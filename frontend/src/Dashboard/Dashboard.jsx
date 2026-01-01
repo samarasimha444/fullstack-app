@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import Sidebar from "./SideBar.jsx";
 import ChatRoom from "./ChatRoom.jsx";
 import { Client } from "@stomp/stompjs";
+import Profile from "./Profile.jsx";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
@@ -107,21 +108,18 @@ export default function Dashboard() {
 
   return (
     <div style={{ display: "flex", padding: 20 }}>
+
+       <div style={{ marginLeft: 30, width: "100%" }}>
+        
+
+
       <Sidebar onSelectReceiver={setReceiver} />
 
-      <div style={{ marginLeft: 30, width: "100%" }}>
-        <h2>Dashboard</h2>
+     
 
-        <img
-          src={user.picture}
-          width={80}
-          height={80}
-          style={{ borderRadius: "50%" }}
-        />
 
-        <p><b>ID:</b> {user.id}</p>
-        <p><b>Name:</b> {user.name}</p>
-        <p><b>Email:</b> {user.email}</p>
+         <Profile user={user}/>
+       
 
         <ChatRoom
           user={user}
