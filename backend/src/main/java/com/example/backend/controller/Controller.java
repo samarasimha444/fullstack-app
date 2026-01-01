@@ -5,6 +5,9 @@ import com.example.backend.entity.User;
 import com.example.backend.service.UserService;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import java.util.List;;
+
 
 
 
@@ -24,10 +27,13 @@ public class Controller {
         return service.me();
     }
 
+    //receiver
+    @GetMapping("/receiver")
+public List<User> getReceivers(@RequestParam String q) {
+    return service.findReceiversByEmail(q);
+    }
 
     
 
 
-
-
-}
+ }

@@ -3,6 +3,7 @@ import com.example.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.Authentication;
 import com.example.backend.entity.User;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -22,6 +23,11 @@ public class UserService {
        return repo.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
    }
 
-   
-
+   //receiver
+     public List<User> findReceiversByEmail(String email) {
+         if (email == null || email.trim().length() < 2) {
+            return List.of();
+        }
+          return repo.findTop10ByEmailContainingIgnoreCase(email.trim());
+    }
 }

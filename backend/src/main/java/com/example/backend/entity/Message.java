@@ -28,5 +28,10 @@ public class Message {
 
     @Column(nullable = false, updatable = false)
     private Instant timestamp;
+     @PrePersist
+    public void prePersist() {
+        this.timestamp = Instant.now(); // 🔥 FIX
+    }
+
 }
 

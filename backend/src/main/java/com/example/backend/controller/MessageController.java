@@ -5,13 +5,16 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import java.security.Principal;
 import com.example.backend.entity.Message;
+import com.example.backend.repository.MessageRepository;
 
 @Controller
 public class MessageController {
 
     private final SimpMessagingTemplate messagingTemplate;
+    private final MessageRepository MessageRepo;
 
-    public MessageController(SimpMessagingTemplate messagingTemplate) {
+    public MessageController(SimpMessagingTemplate messagingTemplate,MessageRepository MessageRepo) {
+        this.MessageRepo=MessageRepo;
         this.messagingTemplate = messagingTemplate;
     }
 
@@ -35,5 +38,8 @@ public class MessageController {
                 "/queue/messages",
                 message
         );
+
+        MessageRepo.save(message);
+       
     }
 }
