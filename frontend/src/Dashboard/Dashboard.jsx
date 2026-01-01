@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Sidebar from "./SideBar.jsx";
+import ChatRoom from "./ChatRoom.jsx";
 import { Client } from "@stomp/stompjs";
 
 export default function Dashboard() {
@@ -30,7 +31,7 @@ export default function Dashboard() {
   }, []);
 
   /* =====================
-     WEBSOCKET CONNECT (NATIVE)
+     WEBSOCKET CONNECT
      ===================== */
   useEffect(() => {
     if (!user || !receiver) return;
@@ -41,7 +42,6 @@ export default function Dashboard() {
     const client = new Client({
       brokerURL: "wss://localhost:8080/ws",
       reconnectDelay: 5000,
-
       debug: (msg) => console.log("🐛 STOMP:", msg),
 
       onConnect: () => {
@@ -81,7 +81,7 @@ export default function Dashboard() {
     if (!connected || !text.trim() || !receiver) return;
 
     const message = {
-      receiverId: receiver.id.toString(), // 🔥 MUST match principal.getName()
+      receiverId: receiver.id.toString(),
       content: text,
     };
 
@@ -107,10 +107,8 @@ export default function Dashboard() {
 
   return (
     <div style={{ display: "flex", padding: 20 }}>
-      {/* Sidebar */}
       <Sidebar onSelectReceiver={setReceiver} />
 
-      {/* Main Area */}
       <div style={{ marginLeft: 30, width: "100%" }}>
         <h2>Dashboard</h2>
 
@@ -125,43 +123,15 @@ export default function Dashboard() {
         <p><b>Name:</b> {user.name}</p>
         <p><b>Email:</b> {user.email}</p>
 
-        {receiver ? (
-          <>
-            <h4>Chat with {receiver.name}</h4>
-            <p>Status: {connected ? "🟢 Connected" : "🔴 Connecting..."}</p>
-
-            <div
-              style={{
-                border: "1px solid #ccc",
-                height: 250,
-                overflowY: "auto",
-                padding: 10,
-                marginBottom: 10,
-              }}
-            >
-              {messages.map((m, i) => (
-                <div key={i}>
-                  <b>
-                    {m.senderId === user.id.toString() ? "Me" : "Them"}:
-                  </b>{" "}
-                  {m.content}
-                </div>
-              ))}
-            </div>
-
-            <input
-              type="text"
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              placeholder="Type a message"
-            />
-            <button onClick={sendMessage} disabled={!connected}>
-              Send
-            </button>
-          </>
-        ) : (
-          <p style={{ marginTop: 20 }}>No receiver selected</p>
-        )}
+        <ChatRoom
+          user={user}
+          receiver={receiver}
+          messages={messages}
+          text={text}
+          setText={setText}
+          sendMessage={sendMessage}
+          connected={connected}
+        />
       </div>
     </div>
   );
