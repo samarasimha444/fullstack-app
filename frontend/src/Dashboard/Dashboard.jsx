@@ -131,6 +131,7 @@ export default function Dashboard() {
           setText={setText}
           sendMessage={sendMessage}
           connected={connected}
+          setMessages={setMessages}
         />
       </div>
     </div>
