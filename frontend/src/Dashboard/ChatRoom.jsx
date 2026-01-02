@@ -44,7 +44,7 @@ export default function ChatRoom({
 
   return (
     <>
-      <h4>Chat with {receiver.name}</h4>
+      <h1>Chat with {receiver.name}</h1>
       <p>Status: {connected ? "🟢 Connected" : "🔴 Connecting..."}</p>
 
       <div
