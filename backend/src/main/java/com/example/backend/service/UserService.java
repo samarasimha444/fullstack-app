@@ -43,4 +43,8 @@ public class UserService {
     public List<Message> getChatHistory(String myId, String receiverId) {
         return MessageRepo.findChatHistory(myId, receiverId);
     }
+
+
+
+    
 }

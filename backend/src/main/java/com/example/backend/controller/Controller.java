@@ -3,6 +3,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.backend.entity.Message;
 import com.example.backend.entity.User;
 import com.example.backend.service.UserService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,6 +20,8 @@ import com.example.backend.repository.MessageRepository;
 @RestController
 public class Controller {
      
+    @Autowired
+    private StringRedisTemplate redis;
     private UserService service;
     private MessageRepository MessageRepo;
    
@@ -31,6 +36,12 @@ public class Controller {
     public User me() {
         return service.me();
     }
+
+    @GetMapping("/testing")
+    public Long login(){
+        return redis.opsForValue().increment("count");
+    }
+    
 
 
 

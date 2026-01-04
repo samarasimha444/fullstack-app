@@ -1,5 +1,6 @@
 package com.example.backend.security.configuration;
 
+import com.example.backend.RateLimitFilter;
 import com.example.backend.security.jwt.jwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -17,41 +18,39 @@ public class SecurityConfig {
 
     private final jwtFilter jwtFilter;
     private final OAuthSuccessHandler oAuthSuccessHandler;
+    private final RateLimitFilter rateLimitFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-            // 🔥 enable CORS (uses your CorsConfigurationSource bean)
             .cors(cors -> {})
-
-            // ❌ CSRF not needed for JWT
             .csrf(csrf -> csrf.disable())
 
-            // ❌ No sessions — JWT only
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
 
-            // 🔐 Google OAuth
             .oauth2Login(oauth ->
                 oauth.successHandler(oAuthSuccessHandler)
             )
 
-            // 🔓 Public endpoints
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                     "/",
                     "/ws/**",
                     "/login/**",
                     "/oauth2/**",
-                    "/error"
-                    
+                    "/error",
+                    "testing"
                 ).permitAll()
                 .anyRequest().authenticated()
             )
 
-            // 🔐 JWT validation filter
+            // 🚦 Rate limiting FIRST
+            .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
+
+            // 🔐 JWT validation AFTER rate limiting
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
