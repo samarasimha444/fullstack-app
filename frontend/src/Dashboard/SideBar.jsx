@@ -18,7 +18,7 @@ export default function Sidebar({ onSelectReceiver }) {
     const controller = new AbortController();
 
     fetch(
-      `https://localhost:8080/receiver?q=${query.slice(atIndex + 1)}`,
+      `https://localhost:8443/receiver?q=${query.slice(atIndex + 1)}`,
       {
         credentials: "include",
         signal: controller.signal,

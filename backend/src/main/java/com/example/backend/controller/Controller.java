@@ -20,7 +20,7 @@ import com.example.backend.repository.MessageRepository;
 @RestController
 public class Controller {
      
-    @Autowired
+    
     private StringRedisTemplate redis;
     private UserService service;
     private MessageRepository MessageRepo;
@@ -32,11 +32,13 @@ public class Controller {
 
 
     //me endpoint
-    @GetMapping("/me")
-    public User me() {
-        return service.me();
+  @GetMapping("/me")
+    public User me() throws Exception {
+   return service.me();
     }
 
+
+    
     @GetMapping("/testing")
     public Long login(){
         return redis.opsForValue().increment("count");

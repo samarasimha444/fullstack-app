@@ -19,7 +19,7 @@ export default function ChatRoom({
     // clear old chat immediately
     setMessages([]);
 
-    fetch(`https://localhost:8080/history/${receiver.id}`, {
+    fetch(`https://localhost:8443/history/${receiver.id}`, {
       credentials: "include",
     })
       .then((res) => {

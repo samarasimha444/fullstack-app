@@ -17,7 +17,7 @@ export default function Dashboard() {
      AUTH CHECK
      ===================== */
   useEffect(() => {
-    fetch("https://localhost:8080/me", {
+    fetch("https://localhost:8443/me", {
       credentials: "include",
     })
       .then((res) => {
@@ -27,7 +27,7 @@ export default function Dashboard() {
       .then(setUser)
       .catch(() => {
         window.location.href =
-          "https://localhost:8080/oauth2/authorization/google";
+          "https://localhost:8443/oauth2/authorization/google";
       });
   }, []);
 
@@ -41,7 +41,7 @@ export default function Dashboard() {
     setConnected(false);
 
     const client = new Client({
-      brokerURL: "wss://localhost:8080/ws",
+      brokerURL: "wss://localhost:8443/ws",
       reconnectDelay: 5000,
       debug: (msg) => console.log("🐛 STOMP:", msg),
 
