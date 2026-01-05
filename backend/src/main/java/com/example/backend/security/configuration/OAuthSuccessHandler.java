@@ -3,7 +3,7 @@ package com.example.backend.security.configuration;
 import com.example.backend.entity.User;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.security.jwt.JwtUtil;
-import jakarta.servlet.http.Cookie;
+import com.example.backend.service.MailService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,8 @@ import java.io.IOException;
 public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
 
     private final UserRepository userRepository;
-    private final JwtUtil JwtUtil;
+    private final JwtUtil jwtUtil;
+    private final MailService mailService; // ✅ ADDED
 
     @Override
     public void onAuthenticationSuccess(
@@ -28,45 +29,43 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
             Authentication authentication
     ) throws IOException {
 
-        // 🔐 Google-authenticated user
         OAuth2User oauthUser = (OAuth2User) authentication.getPrincipal();
 
-        // 🔥 UNIQUE & STABLE identifier
         String sub = oauthUser.getAttribute("sub");
         if (sub == null) {
             throw new IllegalStateException("Google sub not found");
         }
 
-        // Optional profile fields
         String email = oauthUser.getAttribute("email");
         String name = oauthUser.getAttribute("name");
         String picture = oauthUser.getAttribute("picture");
 
-        // ✅ Load or create user using sub as ID
         User user = userRepository.findById(sub)
                 .orElseGet(() -> userRepository.save(
                         User.builder()
-                                .id(sub)        // 👈 sub stored as primary key
+                                .id(sub)
                                 .email(email)
                                 .name(name)
                                 .picture(picture)
                                 .build()
                 ));
 
-        // 🔐 JWT payload = sub
-        String jwt = JwtUtil.generateToken(user.getId());
+        // ✅ SEND LOGIN SUCCESS EMAIL (ASYNC)
+        if (email != null) {
+            mailService.sendLoginSuccessMail(email);
+        }
 
-        // 🍪 HttpOnly cookie
-        Cookie cookie = new Cookie("JWT", jwt);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true); // set true in production (HTTPS)
-        cookie.setPath("/");
-        cookie.setMaxAge(24 * 60 * 60); // 1 day
+        String jwt = jwtUtil.generateToken(user.getId());
 
-        response.addCookie(cookie);
-        cookie.setAttribute("sameSite", "None"); // for cross-site requests
+        String cookie =
+                "JWT=" + jwt +
+                "; Path=/" +
+                "; HttpOnly" +
+                (request.isSecure() ? "; Secure" : "") +
+                "; SameSite=None";
 
-        // 🔁 Redirect to frontend
+        response.setHeader("Set-Cookie", cookie);
+
         response.sendRedirect("https://localhost:5173/");
     }
 }
