@@ -1,17 +1,13 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Sidebar from "./SideBar.jsx";
 import ChatRoom from "./ChatRoom.jsx";
-import { Client } from "@stomp/stompjs";
 import Profile from "./Profile.jsx";
+import { useChatSocket } from "./useChatSocket.js";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [receiver, setReceiver] = useState(null);
-  const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
-  const [connected, setConnected] = useState(false);
-
-  const stompClientRef = useRef(null);
 
   /* =====================
      AUTH CHECK
@@ -24,79 +20,44 @@ export default function Dashboard() {
         if (!res.ok) throw new Error("Not authenticated");
         return res.json();
       })
-      .then(setUser)
+      .then((me) => {
+        me.id = String(me.id);
+        setUser(me);
+      })
       .catch(() => {
         window.location.href =
           "https://localhost:8443/oauth2/authorization/google";
       });
   }, []);
 
-  /* =====================
-     WEBSOCKET CONNECT
-     ===================== */
-  useEffect(() => {
-    if (!user || !receiver) return;
+  // ✅ ALL socket logic moved out
+  const {
+    connected,
+    messages,
+    setMessages,
+    presenceMap,
+    sendMessage: sendSocketMessage,
+  } = useChatSocket(user);
 
-    setMessages([]);
-    setConnected(false);
-
-    const client = new Client({
-      brokerURL: "wss://localhost:8443/ws",
-      reconnectDelay: 5000,
-      debug: (msg) => console.log("🐛 STOMP:", msg),
-
-      onConnect: () => {
-        console.log("✅ STOMP CONNECTED");
-        setConnected(true);
-
-        client.subscribe("/user/queue/messages", (message) => {
-          const body = JSON.parse(message.body);
-          setMessages((prev) => [...prev, body]);
-        });
-      },
-
-      onDisconnect: () => {
-        console.log("❌ STOMP DISCONNECTED");
-        setConnected(false);
-      },
-
-      onStompError: (frame) => {
-        console.error("❌ STOMP ERROR", frame);
-      },
-    });
-
-    client.activate();
-    stompClientRef.current = client;
-
-    return () => {
-      client.deactivate();
-      stompClientRef.current = null;
-      setConnected(false);
-    };
-  }, [user, receiver]);
-
-  /* =====================
-     SEND MESSAGE
-     ===================== */
   const sendMessage = () => {
-    if (!connected || !text.trim() || !receiver) return;
+    if (!connected || !text.trim() || !receiver || !user) return;
+
+    const receiverId = String(receiver.id);
 
     const message = {
-      receiverId: receiver.id.toString(),
+      receiverId,
       content: text,
     };
 
-    stompClientRef.current.publish({
-      destination: "/app/chat.send",
-      body: JSON.stringify(message),
-    });
+    const ok = sendSocketMessage(message);
+    if (!ok) return;
 
     // optimistic UI
     setMessages((prev) => [
       ...prev,
       {
-        senderId: user.id.toString(),
-        receiverId: receiver.id.toString(),
+        senderId: String(user.id),
+        receiverId,
         content: text,
       },
     ]);
@@ -108,18 +69,17 @@ export default function Dashboard() {
 
   return (
     <div style={{ display: "flex", padding: 20 }}>
+      <Sidebar
+        onSelectReceiver={(r) => {
+          if (!r) return setReceiver(null);
+          r.id = String(r.id);
+          setReceiver(r);
+        }}
+        presenceMap={presenceMap}
+      />
 
-       <div style={{ marginLeft: 30, width: "100%" }}>
-        
-
-
-      <Sidebar onSelectReceiver={setReceiver} />
-
-     
-
-
-         <Profile user={user}/>
-       
+      <div style={{ marginLeft: 30, width: "100%" }}>
+        <Profile user={user} />
 
         <ChatRoom
           user={user}
@@ -130,6 +90,7 @@ export default function Dashboard() {
           sendMessage={sendMessage}
           connected={connected}
           setMessages={setMessages}
+          presenceMap={presenceMap}
         />
       </div>
     </div>

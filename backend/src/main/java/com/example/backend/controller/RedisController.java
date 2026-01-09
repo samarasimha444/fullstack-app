@@ -19,8 +19,10 @@ public class RedisController {
 
 
     @GetMapping("/user")
-   public long setUser(){
-   return  redis.getExpire("name");
+   public String setUser(){
+  redis.opsForValue().set("name","samara");
+  return redis.opsForValue().get("name");
+   };
      
     
     
@@ -33,4 +35,4 @@ public class RedisController {
    }
     
     
-}
+

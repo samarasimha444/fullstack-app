@@ -9,43 +9,43 @@ export default function ChatRoom({
   setText,
   sendMessage,
   connected,
+  presenceMap,
 }) {
-  /* =====================
-     LOAD CHAT HISTORY
-     ===================== */
   useEffect(() => {
     if (!receiver || !user) return;
 
-    // clear old chat immediately
     setMessages([]);
 
-    fetch(`https://localhost:8443/history/${receiver.id}`, {
+    fetch(`https://localhost:8443/history/${String(receiver.id)}`, {
       credentials: "include",
     })
       .then((res) => {
         if (!res.ok) throw new Error("Failed to load chat history");
         return res.json();
       })
-      .then((history) => {
-        // history = [{ senderId, receiverId, content, timestamp }]
-        setMessages(history);
-      })
-      .catch((err) => {
-        console.error("❌ Chat history error:", err);
-      });
+      .then((history) => setMessages(history))
+      .catch((err) => console.error("❌ Chat history error:", err));
   }, [receiver, user, setMessages]);
 
-  /* =====================
-     UI
-     ===================== */
   if (!receiver) {
     return <p style={{ marginTop: 20 }}>No receiver selected</p>;
   }
 
+  // ✅ Normalize presence lookup
+  const receiverKey = String(receiver.id);
+
+  const receiverStatus = presenceMap?.[receiverKey] ?? "OFFLINE";
+
   return (
     <>
       <h1>Chat with {receiver.name}</h1>
-      <p>Status: {connected ? "🟢 Connected" : "🔴 Connecting..."}</p>
+
+      <p>WebSocket: {connected ? "🟢 Connected" : "🔴 Connecting..."}</p>
+
+      <p>
+        Receiver:{" "}
+        {receiverStatus === "ONLINE" ? "🟢 Online" : "⚫ Offline"}
+      </p>
 
       <div
         style={{
@@ -58,7 +58,7 @@ export default function ChatRoom({
       >
         {messages.map((m, i) => (
           <div key={m.id ?? i}>
-            <b>{m.senderId === user.id.toString() ? "Me" : "Them"}:</b>{" "}
+            <b>{String(m.senderId) === String(user.id) ? "Me" : "Them"}:</b>{" "}
             {m.content}
           </div>
         ))}

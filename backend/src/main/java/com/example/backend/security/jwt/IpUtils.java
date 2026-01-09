@@ -1,4 +1,4 @@
-package com.example.backend;
+package com.example.backend.security.jwt;
 
 import jakarta.servlet.http.HttpServletRequest;
 

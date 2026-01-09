@@ -1,7 +1,8 @@
 package com.example.backend.security.configuration;
 
-import com.example.backend.RateLimitFilter;
-import com.example.backend.security.jwt.jwtFilter;
+import com.example.backend.filters.RateLimitFilter;
+import com.example.backend.filters.jwtFilter;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,7 +43,11 @@ public class SecurityConfig {
                     "/login/**",
                     "/oauth2/**",
                     "/error",
-                    "testing"
+                    "/testing",
+                    "/presence/**",
+                    "/actuator/**",
+                    "/topic/**",
+                    "/app/**"
                 ).permitAll()
                 .anyRequest().authenticated()
             )

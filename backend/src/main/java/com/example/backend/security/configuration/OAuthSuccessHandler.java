@@ -51,9 +51,9 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
                 ));
 
         // ✅ SEND LOGIN SUCCESS EMAIL (ASYNC)
-        if (email != null) {
-            mailService.sendLoginSuccessMail(email);
-        }
+     //   if (email != null) {
+           // mailService.sendLoginSuccessMail(email);
+       // }
 
         String jwt = jwtUtil.generateToken(user.getId());
 
