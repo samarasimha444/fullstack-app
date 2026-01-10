@@ -29,17 +29,5 @@ public class PresenceService {
         return Boolean.TRUE.equals(firstOnline);
     }
 
-    public boolean isOnline(String userId) {
-        Boolean exists = redisTemplate.hasKey(key(userId));
-        return Boolean.TRUE.equals(exists);
-    }
-
-    public void setOfflineNow(String userId) {
-        redisTemplate.delete(key(userId));
-    }
-
-    public long getTtlSeconds(String userId) {
-        Long ttl = redisTemplate.getExpire(key(userId), TimeUnit.SECONDS);
-        return ttl == null ? -2 : ttl;
-    }
+  
 }

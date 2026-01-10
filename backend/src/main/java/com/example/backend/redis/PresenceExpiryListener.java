@@ -1,8 +1,8 @@
 package com.example.backend.redis;
-
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.stereotype.Component;
+
 
 @Component
 public class PresenceExpiryListener implements MessageListener {

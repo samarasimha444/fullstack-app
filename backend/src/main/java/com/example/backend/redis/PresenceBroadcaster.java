@@ -1,5 +1,4 @@
 package com.example.backend.redis;
-
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
