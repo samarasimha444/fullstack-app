@@ -1,8 +1,6 @@
 package com.example.backend.redis;
-
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
-
 import java.security.Principal;
 
 @Controller

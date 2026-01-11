@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.example.backend.repository.UserRepository;
-import com.example.backend.security.jwt.JwtUtil;
+import com.example.backend.utils.JwtUtil;
 
 import java.io.IOException;
 import java.util.Collections;

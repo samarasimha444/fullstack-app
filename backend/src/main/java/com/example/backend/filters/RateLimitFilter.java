@@ -1,7 +1,7 @@
 package com.example.backend.filters;
 
-import com.example.backend.security.jwt.IpUtils;
 import com.example.backend.service.RateLimitService;
+import com.example.backend.utils.IpUtils;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

@@ -20,53 +20,39 @@ import com.example.backend.repository.MessageRepository;
 @RestController
 public class Controller {
      
-    
-    private StringRedisTemplate redis;
-    private UserService service;
-    private MessageRepository MessageRepo;
-   
-    public Controller(UserService service ,MessageRepository messageRepo) {
+     private UserService service;
+
+     public Controller(UserService service ,MessageRepository messageRepo) {
         this.service = service;
-        this.MessageRepo=messageRepo;
+       
     }
 
 
-    //me endpoint
+   //me endpoint
   @GetMapping("/me")
     public User me() throws Exception {
    return service.me();
     }
 
 
-    
-    @GetMapping("/testing")
-    public Long login(){
-        return redis.opsForValue().increment("count");
-    }
-    
-
-
-
-
-    //reciever
+  //reciever
     @GetMapping("/receiver")
 public List<User> getReceivers(@RequestParam String q) {
     return service.findReceiversByEmail(q);
     }
 
-
-    
-    //chat history
+     //chat history
     @GetMapping("/history/{receiverId}")
      public List<Message> getChatHistory(
             @PathVariable String receiverId,
             Principal principal
-    ) {
+    )
+
+
+     {
         // principal.getName() = logged-in userId (google sub)
         String myId = principal.getName();
-
         return service.getChatHistory(myId, receiverId);
     }
-
-
- }
+    
+}

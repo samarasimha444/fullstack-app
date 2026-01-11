@@ -1,9 +1,10 @@
-package com.example.backend.security.configuration;
+package com.example.backend.configuration;
 
 import com.example.backend.entity.User;
 import com.example.backend.repository.UserRepository;
-import com.example.backend.security.jwt.JwtUtil;
 import com.example.backend.service.MailService;
+import com.example.backend.utils.JwtUtil;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

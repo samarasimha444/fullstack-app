@@ -1,4 +1,4 @@
-package com.example.backend.security.jwt;
+package com.example.backend.utils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;

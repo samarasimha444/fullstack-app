@@ -1,6 +1,5 @@
 package com.example.backend.websockets;
 
-import com.example.backend.security.jwt.JwtUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +8,9 @@ import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
+
+import com.example.backend.utils.JwtUtil;
+
 import java.util.Map;
 import org.springframework.http.server.ServerHttpResponse;
 

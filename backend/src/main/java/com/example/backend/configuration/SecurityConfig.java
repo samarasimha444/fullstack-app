@@ -1,4 +1,4 @@
-package com.example.backend.security.configuration;
+package com.example.backend.configuration;
 
 import com.example.backend.filters.RateLimitFilter;
 import com.example.backend.filters.jwtFilter;
